@@ -22,7 +22,9 @@ namespace ClientApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        // створюємо UDP сокет для відправки та отримання пакетів даних
         UdpClient client = new UdpClient();
+
         public MainWindow()
         {
             InitializeComponent();
@@ -30,21 +32,27 @@ namespace ClientApp
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+            // витягуємо дані з текстових блоків на вікні
             string ip = ipTB.Text;
             int port = int.Parse(portTB.Text);
 
             string message = msgTB.Text;
 
+            // створюємо endpoint, який містить адресу (ip + port) сервера
             IPEndPoint endpoint = new IPEndPoint(IPAddress.Parse(ip), port);
 
+            // виконуємо відправку пакету даних на адресу сервера
             client.Send(Encoding.UTF8.GetBytes(message), endpoint);
 
-            // TODO: run receiving in Task
+            // TODO: виконати очікування відповіді від сервера в окремому потоці
 
+            // отримуємо від сервера відповідь
             IPEndPoint? server = null;
             var data = client.Receive(ref server);
 
+            // конвертуємо отримані байти в рядок
             var response = Encoding.UTF8.GetString(data);
+            // додаємо відповідь в список
             dialogList.Items.Add(response);
         }
     }
